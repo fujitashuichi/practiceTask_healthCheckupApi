@@ -20,7 +20,8 @@ function StatisticPage() {
         resetFormData();
     }
 
-    const postData = async () => {
+    const postData = async (e) => {
+        e.preventDefault();
         const response = await fetch("http://localhost:5229/statistic", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -69,21 +70,23 @@ function StatisticPage() {
                 }
                 {sendData.length === 0 && <p>まだデータが追加されていません</p>}
             </dl>
-            <button type="submit" onClick={postData}>送信</button>
+
+            <button type="submit" onClick={(e) => postData(e).then(console.log(result))}>送信</button>
+
             <div>
                 <h2>結果</h2>
                 <dl>
-                    {result.Average != undefined &&
+                    {result.average != undefined &&
                         <>
                             <dt>人数: </dt>
-                            <dd>{result.MemberCount}人</dd>
+                            <dd>{result.memberCount}人</dd>
                             <dt>平均BMI: </dt>
-                            <dd>{Math.round(result.Average * 100) / 100}kg/m²</dd>
+                            <dd>{Math.round(result.average * 100) / 100}kg/m²</dd>
                             <dt>健康な人数: </dt>
-                            <dd>{result.HealthMemberCount}人</dd>
+                            <dd>{result.healthMemberCount}人</dd>
                         </>
                     }
-                    {result.Average === undefined && <p>結果無し</p>}
+                    {result.average === undefined && <p>結果無し</p>}
                 </dl>
             </div>
         </div>
