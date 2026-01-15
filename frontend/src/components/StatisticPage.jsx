@@ -1,13 +1,16 @@
 import { useState } from 'react'
 
 function StatisticPage() {
-    const [sendData, setSendData] = useState([{ Name: "", Height: "", Weight: "" }]);
+    const [sendData, setSendData] = useState([]);
     const [formData, setFormdata] = useState({ Name: "", Height: "", Weight: "" });
     const [result, setResult] = useState({});
 
     const addSendData = () => {
         if (setSendData.some(item => item.Name === formData.Name)) {
             alert("同じ名前が既に追加されています");
+            return;
+        } else if (formData.Name === "" || formData.Height === "" || formData.Weight === "") {
+            alert("すべての項目を入力してください");
             return;
         }
 
@@ -42,6 +45,17 @@ function StatisticPage() {
                 <input type="number" min={1} maxLength={3} onChange={(e) => setFormdata({...formData, Weight: e.target.value})} />
                 <button type="submit" onClick={addSendData}>追加</button>
             </form>
+            <dl>
+                {sendData.length > 0 &&
+                    sendData.map((data, index) => {
+                        return (<div key={index} style={{ display: "flex" }}>
+                            <dt>名前: {data.Name}</dt>
+                            <dd>身長: {data.Height}cm, 体重: {data.Weight}kg</dd>
+                        </div>)
+                    })
+                }
+                {sendData.length === 0 && <p>まだデータが追加されていません</p>}
+            </dl>
             <button type="submit" onClick={postData}>送信</button>
             <div>
                 <h2>結果</h2>
