@@ -20,6 +20,12 @@ app.MapPost("/calc", (BmiData data) =>
     };
 });
 
+app.MapPost("/statistic", (List<BmiData> dataList) =>
+{
+    var healthCheckRequest = new HealthCheckRequest { bmiDataList = dataList };
+    return healthCheckRequest.GetStatistics();
+});
+
 app.Run();
 
 
@@ -64,18 +70,26 @@ public class HealthCheckRequest
 {
     public List<BmiData> bmiDataList { get; set; } = [];
 
-    public void GetStatistics()
+    public object GetStatistics()
     {
-        double bmiSum = 0;
+        if (bmiDataList.Count == 0) return new { Average = 0 };
+
+        double AverBmi = bmiDataList.Average(d => d.CalculateBmi());
+
+        int healthyMemberCount = 0;
         foreach (var data in bmiDataList)
         {
-            bmiSum += data.CalculateBmi();
+            if (data.GetStatus() == "標準")
+            {
+                healthyMemberCount++;
+            }
         }
-        double AverBmi = bmiSum / bmiDataList.Length();
 
         return new
         {
-            AverageBmi = AverBmi,
+            Average = AverBmi,
+            MemberCount = bmiDataList.Count,
+            HealthyMemberCount = healthyMemberCount
         };
     }
 }
