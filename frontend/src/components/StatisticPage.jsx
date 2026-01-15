@@ -5,8 +5,9 @@ function StatisticPage() {
     const [formData, setFormdata] = useState({ Name: "", Height: "", Weight: "" });
     const [result, setResult] = useState({});
 
-    const addSendData = () => {
-        if (setSendData.some(item => item.Name === formData.Name)) {
+    const addSendData = (e) => {
+        e.preventDefault();
+        if (sendData.some(item => item.Name === formData.Name)) {
             alert("同じ名前が既に追加されています");
             return;
         } else if (formData.Name === "" || formData.Height === "" || formData.Weight === "") {
@@ -38,12 +39,24 @@ function StatisticPage() {
             <h1>複数人の身長・体重から統計をとります</h1>
             <form action="">
                 <label htmlFor="name">名前</label>
-                <input type="text" minLength={1} maxLength={20} onChange={(e) => setFormdata({...formData, Name: e.target.value})} />
+                <input
+                    type="text" minLength={1} maxLength={20}
+                    value={formData.Name}
+                    onChange={(e) => setFormdata({...formData, Name: e.target.value})}
+                />
                 <label htmlFor="height">身長</label>
-                <input type="number" min={1} maxLength={3} onChange={(e) => setFormdata({...formData, Height: e.target.value})} />
+                <input
+                    type="number" min={1} maxLength={3}
+                    value={formData.Height}
+                    onChange={(e) => setFormdata({...formData, Height: e.target.value})}
+                />
                 <label htmlFor="weight">体重</label>
-                <input type="number" min={1} maxLength={3} onChange={(e) => setFormdata({...formData, Weight: e.target.value})} />
-                <button type="submit" onClick={addSendData}>追加</button>
+                <input
+                    type="number" min={1} maxLength={3}
+                    value={formData.Weight}
+                    onChange={(e) => setFormdata({...formData, Weight: e.target.value})}
+                />
+                <button type="submit" onClick={(e) => addSendData(e)}>追加</button>
             </form>
             <dl>
                 {sendData.length > 0 &&
@@ -59,7 +72,19 @@ function StatisticPage() {
             <button type="submit" onClick={postData}>送信</button>
             <div>
                 <h2>結果</h2>
-                <p>{JSON.stringify(result)}</p>
+                <dl>
+                    {result.Average != undefined &&
+                        <>
+                            <dt>人数: </dt>
+                            <dd>{result.MemberCount}人</dd>
+                            <dt>平均BMI: </dt>
+                            <dd>{Math.round(result.Average * 100) / 100}kg/m²</dd>
+                            <dt>健康な人数: </dt>
+                            <dd>{result.HealthMemberCount}人</dd>
+                        </>
+                    }
+                    {result.Average === undefined && <p>結果無し</p>}
+                </dl>
             </div>
         </div>
     )
